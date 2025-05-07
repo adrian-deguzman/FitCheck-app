@@ -1,0 +1,214 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block content %}
+<style>
+  .button {
+    background-color: black;
+    color: white;
+    border: 1px solid black;
+    padding: 15px 30px;
+    border-radius: 20px;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    margin: 0;
+  }
+
+  .button:hover {
+    color: black;
+    background-color: white;
+  }
+
+  .button:active {
+    color: black;
+    background-color: white;
+    border-color: white;
+  }
+</style>
+<a href="{% url 'FoodAnalysis:food_analysis' %}" class="button">Back to Analysis</a>
+<br><br>
+<h1 style="margin-top: 0px; margin-bottom: 0px;">Food Analysis Detail</h1>
+
+<div class="main-content">
+  <section id="upper-left">
+    <div style="text-align: center;">
+      <img src="{{ analysis.image.url }}" alt="Analyzed Image" style="height: 200px; width: auto; border-radius: 10px;">
+    </div>
+
+    <div style="text-align: center; margin-top: 20px;">
+      <p>
+        <span style="font-weight: 300;">Detected Food:</span>
+        <span style="font-size: 1.5em; font-weight: bold;">{{ analysis.food_name|fix_food_name }}</span>
+      </p>
+      <p style="font-size: 1.1em; color: #555;">
+        {{ analysis.description }}
+      </p>
+    </div>
+  </section>
+
+  <section id="upper-right">
+    <h3>Analysis Date and Time</h3>
+    <div style="display: flex; gap: 20px; padding: 12px 16px; border: 1px solid #ccc; border-radius: 10px; background-color: #f9f9f9; min-width: 400px; flex-wrap: nowrap;">
+      <div style="font-weight: bold; color: #2c3e50;">Date:</div>
+      <div style="color: #555; white-space: nowrap;">{{ analysis.analyzed_at|date:"F j, Y" }}</div>
+      <div style="font-weight: bold; color: #2c3e50;">Time:</div>
+      <div style="color: #555;">{{ analysis.analyzed_at|time:"g:i a" }}</div>
+    </div>
+  </section>
+
+  <section id="lower-left">
+    <h3 id="nutrition-heading">Nutrition Facts per 100g</h3>
+
+    <!-- Food Weight Input -->
+    <div style="padding: 10px; border: 1px solid #ccc; border-radius: 8px; background-color: #f9f9f9; margin-bottom: 10px;">
+      <label for="food-weight" style="font-weight: bold;">Food Weight (grams):</label>
+      <input type="number" id="food-weight" style="padding: 5px;" value="100" min="1">
+    </div>
+  
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      <div style="padding: 10px; border: 1px solid #ccc; border-radius: 8px; background-color: #f9f9f9;">
+        <span style="font-weight: bold;">Calories:</span>
+        <span id="calories-value">{{ analysis.calories }} kcal</span>
+      </div>
+  
+      <div style="padding: 10px; border: 1px solid #ccc; border-radius: 8px; background-color: #f9f9f9;">
+        <span style="font-weight: bold;">Protein:</span>
+        <span id="protein-value">{{ analysis.protein }} g</span>
+      </div>
+  
+      <div style="padding: 10px; border: 1px solid #ccc; border-radius: 8px; background-color: #f9f9f9;">
+        <span style="font-weight: bold;">Carbohydrates:</span>
+        <span id="carbs-value">{{ analysis.carbohydrates }} g</span>
+      </div>
+  
+      <div style="padding: 10px; border: 1px solid #ccc; border-radius: 8px; background-color: #f9f9f9;">
+        <span style="font-weight: bold;">Fats:</span>
+        <span id="fats-value">{{ analysis.fats }} g</span>
+      </div>
+  
+      <div style="padding: 10px; border: 1px solid #ccc; border-radius: 8px; background-color: #f9f9f9;">
+        <span style="font-weight: bold;">Fiber:</span>
+        <span id="fiber-value">{{ analysis.fiber }} g</span>
+      </div>
+  
+      <div style="padding: 10px; border: 1px solid #ccc; border-radius: 8px; background-color: #f9f9f9;">
+        <span style="font-weight: bold;">Sugars:</span>
+        <span id="sugars-value">{{ analysis.sugars }} g</span>
+      </div>
+  
+      <div style="padding: 10px; border: 1px solid #ccc; border-radius: 8px; background-color: #f9f9f9;">
+        <span style="font-weight: bold;">Sodium:</span>
+        <span id="sodium-value">{{ analysis.sodium }} mg</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="lower-middle">
+    <h3>Ingredients</h3>
+    {% if analysis.ingredients %}
+      <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+        {% for ingredient in analysis.ingredients|split_by_comma %}
+          {% if ingredient %}
+            <div style="padding: 8px 12px; border: 1px solid #ccc; border-radius: 8px; background-color: #f9f9f9; color: #2c3e50; display: inline-flex;">
+              {{ ingredient }}
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% else %}
+      <p>No ingredients listed.</p>
+    {% endif %}
+
+    <h3>Allergens</h3>
+    {% if analysis.allergens %}
+      <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+        {% for allergen in analysis.allergens|split_by_comma %}
+          {% if allergen %}
+            <div style="padding: 8px 12px; border: 1px solid #ccc; border-radius: 8px; background-color: #f9f9f9; color: #2c3e50; display: inline-flex;">
+              {{ allergen }}
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% else %}
+      <p>No allergens listed.</p>
+    {% endif %}
+
+  </section>
+
+  <section id="lower-right">
+    <h3>Food Alternatives</h3>
+    {% if food_alternatives %}
+      <div class="scrollable-list" style="display: flex; flex-direction: column; gap: 10px;">
+        {% for alt in food_alternatives.splitlines %}
+          {% if alt.strip %}
+            <div style="padding: 10px; border: 1px solid #ccc; border-radius: 8px; background-color: #f9f9f9; color: #2c3e50;">
+              {{ alt }}
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% else %}
+      <p>No alternatives available.</p>
+    {% endif %}
+  </section>
+</div>
+
+<script>
+  // Get elements
+  const foodWeightInput = document.getElementById('food-weight');
+  const caloriesValue = document.getElementById('calories-value');
+  const proteinValue = document.getElementById('protein-value');
+  const carbsValue = document.getElementById('carbs-value');
+  const fatsValue = document.getElementById('fats-value');
+  const fiberValue = document.getElementById('fiber-value');
+  const sugarsValue = document.getElementById('sugars-value');
+  const sodiumValue = document.getElementById('sodium-value');
+
+  // Default values (nutrition facts per 100g)
+  const nutritionFacts = {
+    calories: {{ analysis.calories }},
+    protein: {{ analysis.protein }},
+    carbohydrates: {{ analysis.carbohydrates }},
+    fats: {{ analysis.fats }},
+    fiber: {{ analysis.fiber }},
+    sugars: {{ analysis.sugars }},
+    sodium: {{ analysis.sodium }}
+  };
+
+  // Function to update the nutrition values based on food weight
+  function updateNutrition() {
+    const foodWeight = foodWeightInput.value;
+    
+    // Calculate adjusted values
+    const adjustedCalories = (nutritionFacts.calories * foodWeight) / 100;
+    const adjustedProtein = (nutritionFacts.protein * foodWeight) / 100;
+    const adjustedCarbs = (nutritionFacts.carbohydrates * foodWeight) / 100;
+    const adjustedFats = (nutritionFacts.fats * foodWeight) / 100;
+    const adjustedFiber = (nutritionFacts.fiber * foodWeight) / 100;
+    const adjustedSugars = (nutritionFacts.sugars * foodWeight) / 100;
+    const adjustedSodium = (nutritionFacts.sodium * foodWeight) / 100;
+    const nutritionHeading = document.getElementById('nutrition-heading');
+
+    // Update the values in the UI
+    nutritionHeading.textContent = `Nutrition Facts per ${foodWeight}g`;
+    caloriesValue.textContent = `${adjustedCalories.toFixed(2)} kcal`;
+    proteinValue.textContent = `${adjustedProtein.toFixed(2)} g`;
+    carbsValue.textContent = `${adjustedCarbs.toFixed(2)} g`;
+    fatsValue.textContent = `${adjustedFats.toFixed(2)} g`;
+    fiberValue.textContent = `${adjustedFiber.toFixed(2)} g`;
+    sugarsValue.textContent = `${adjustedSugars.toFixed(2)} g`;
+    sodiumValue.textContent = `${adjustedSodium.toFixed(2)} mg`;
+  }
+
+  // Add event listener to update nutrition facts on food weight input change
+  foodWeightInput.addEventListener('input', updateNutrition);
+
+  // Initialize on page load
+  updateNutrition();
+</script>
+{% endblock %}

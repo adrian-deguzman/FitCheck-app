@@ -1,0 +1,251 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block content %}
+<h1 style="margin-top: 0px; margin-bottom: 0px;">Food Analysis</h1>
+
+<div class="main-content">
+  <section id="upper-left">
+    <form method="post" enctype="multipart/form-data" id="upload-form">
+      {% csrf_token %}
+
+      <h3>Food Classifier</h3>
+
+      <div id="preview-container" style="text-align: center;">
+        {% if analysis %}
+          <img src="{{ analysis.image.url }}" alt="Uploaded Image" style="height: 200px; width: auto; border-radius: 10px;">
+        {% else %}
+          <div style="width: 80%; height: 200px; background-color: #eee; border-radius: 10px; margin: auto; display: flex; align-items: center; justify-content: center;">
+            <p style="color: #999;">No image uploaded</p>
+          </div><br>
+        {% endif %}
+      </div>
+
+      <input type="file" id="file-input" name="image" accept="image/*" style="display: none;" onchange="previewImage(this)">
+      <div style="display: flex; justify-content: center; margin-bottom: 0;">
+        <div style="display: flex; gap: 10px;">
+            <button type="button" class="button" onclick="document.getElementById('file-input').click();">Upload</button>
+            <button type="submit" name="analyze" class="button">Analyze</button>
+        </div>
+    </div>
+    </form>
+
+    <div style="text-align: center;" id="loading-indicator" hidden>
+      <p style="font-size: 1.3em; font-weight: bold;">
+        Analyzing new food<span id="dots">.</span>
+      </p>
+    </div>
+
+    {% if analysis %}
+      <div style="text-align: center;">
+        <p>
+          <span style="font-weight: 300;">Detected Food:</span>
+          <span class="fade-in" style="font-size: 1.5em; font-weight: bold;"> {{ analysis.food_name|fix_food_name }}</span>
+        </p>
+        <p class="fade-in" style="font-size: 1.1em; color: #555;">
+          {{ ai_description }}
+        </p>
+      </div>
+    {% endif %}
+  </section>
+
+  <section id="upper-right">
+    <h3>Past Analyses</h3>
+    {% if past_analyses %}
+      <div class="scrollable-list" style="display: flex; flex-direction: column; gap: 10px;">
+        {% for past in past_analyses %}
+          <a href="{% url 'FoodAnalysis:food_analysis_detail' past.pk %}" style="text-decoration: none;">
+            <div class="past-analysis-card">
+              <div style="flex: 2; font-weight: bold; color: #2c3e50;">{{ past.food_name|fix_food_name }}</div>
+              <div style="flex: 1; color: #555;">{{ past.analyzed_at|date:"F j, Y" }}</div>
+              <div style="flex: 1; color: #555;">{{ past.analyzed_at|time:"g:i a" }}</div>
+            </div>
+          </a>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p>No past analyses available.</p>
+    {% endif %}
+  </section>
+  
+  
+  {% if analysis %}
+  <section id="lower-left">
+    <h3 id="nutrition-heading">Nutrition Facts per 100g</h3>
+
+    <!-- Food Weight Input -->
+    <div style="padding: 10px; border: 1px solid #ccc; border-radius: 8px; background-color: #f9f9f9; margin-bottom: 10px;">
+      <label for="food-weight" style="font-weight: bold;">Food Weight (grams):</label>
+      <input type="number" id="food-weight" style="padding: 5px;" value="100" min="1">
+    </div>
+  
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      <div style="padding: 10px; border: 1px solid #ccc; border-radius: 8px; background-color: #f9f9f9;">
+        <span style="font-weight: bold;">Calories:</span>
+        <span id="calories-value">{{ analysis.calories }} kcal</span>
+      </div>
+  
+      <div style="padding: 10px; border: 1px solid #ccc; border-radius: 8px; background-color: #f9f9f9;">
+        <span style="font-weight: bold;">Protein:</span>
+        <span id="protein-value">{{ analysis.protein }} g</span>
+      </div>
+  
+      <div style="padding: 10px; border: 1px solid #ccc; border-radius: 8px; background-color: #f9f9f9;">
+        <span style="font-weight: bold;">Carbohydrates:</span>
+        <span id="carbs-value">{{ analysis.carbohydrates }} g</span>
+      </div>
+  
+      <div style="padding: 10px; border: 1px solid #ccc; border-radius: 8px; background-color: #f9f9f9;">
+        <span style="font-weight: bold;">Fats:</span>
+        <span id="fats-value">{{ analysis.fats }} g</span>
+      </div>
+  
+      <div style="padding: 10px; border: 1px solid #ccc; border-radius: 8px; background-color: #f9f9f9;">
+        <span style="font-weight: bold;">Fiber:</span>
+        <span id="fiber-value">{{ analysis.fiber }} g</span>
+      </div>
+  
+      <div style="padding: 10px; border: 1px solid #ccc; border-radius: 8px; background-color: #f9f9f9;">
+        <span style="font-weight: bold;">Sugars:</span>
+        <span id="sugars-value">{{ analysis.sugars }} g</span>
+      </div>
+  
+      <div style="padding: 10px; border: 1px solid #ccc; border-radius: 8px; background-color: #f9f9f9;">
+        <span style="font-weight: bold;">Sodium:</span>
+        <span id="sodium-value">{{ analysis.sodium }} mg</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="lower-middle">
+    <h3>Ingredients</h3>
+    {% if analysis.ingredients %}
+      <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+        {% for ingredient in analysis.ingredients|split_by_comma %}
+          {% if ingredient %}
+            <div style="padding: 8px 12px; border: 1px solid #ccc; border-radius: 8px; background-color: #f9f9f9; color: #2c3e50; display: inline-flex;">
+              {{ ingredient }}
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% else %}
+      <p>No ingredients listed.</p>
+    {% endif %}
+
+    <h3>Allergens</h3>
+    {% if analysis.allergens %}
+      <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+        {% for allergen in analysis.allergens|split_by_comma %}
+          {% if allergen %}
+            <div style="padding: 8px 12px; border: 1px solid #ccc; border-radius: 8px; background-color: #f9f9f9; color: #2c3e50; display: inline-flex;">
+              {{ allergen }}
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% else %}
+      <p>No allergens listed.</p>
+    {% endif %}
+
+  </section>
+  
+  
+
+  <section id="lower-right">
+    <h3>Food Alternatives</h3>
+    {% if food_alternatives %}
+      <div class="scrollable-list" style="display: flex; flex-direction: column; gap: 10px;">
+        {% for alt in food_alternatives.splitlines %}
+          {% if alt.strip %}
+            <div style="padding: 10px; border: 1px solid #ccc; border-radius: 8px; background-color: #f9f9f9; color: #2c3e50;">
+              {{ alt }}
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% else %}
+      <p>No alternatives available.</p>
+    {% endif %}
+  </section>
+  
+  
+  
+  {% endif %}
+</div>
+
+<script>
+  // === IMAGE PREVIEW ===
+  document.getElementById('file-input').addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    if (file) {
+      const previewContainer = document.getElementById('preview-container');
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        previewContainer.innerHTML = `<img src="${e.target.result}" alt="Preview" style="height: 200px; width: auto; border-radius: 10px;"><br><br>`;
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  // === LOADING INDICATOR ===
+  document.getElementById('upload-form').addEventListener('submit', function() {
+    const loading = document.getElementById('loading-indicator');
+    const dots = document.getElementById('dots');
+
+    loading.hidden = false;
+
+    let count = 1;
+    const interval = setInterval(() => {
+      dots.textContent = '.'.repeat(count);
+      count = (count % 3) + 1;
+    }, 500);
+
+    // Let form continue submitting
+  });
+</script>
+
+{% if analysis %}
+<script>
+  // === NUTRITION FACTS CALCULATOR ===
+  const foodWeightInput = document.getElementById('food-weight');
+  const caloriesValue = document.getElementById('calories-value');
+  const proteinValue = document.getElementById('protein-value');
+  const carbsValue = document.getElementById('carbs-value');
+  const fatsValue = document.getElementById('fats-value');
+  const fiberValue = document.getElementById('fiber-value');
+  const sugarsValue = document.getElementById('sugars-value');
+  const sodiumValue = document.getElementById('sodium-value');
+  const nutritionHeading = document.getElementById('nutrition-heading');
+
+  const nutritionFacts = {
+    calories: {{ analysis.calories }},
+    protein: {{ analysis.protein }},
+    carbohydrates: {{ analysis.carbohydrates }},
+    fats: {{ analysis.fats }},
+    fiber: {{ analysis.fiber }},
+    sugars: {{ analysis.sugars }},
+    sodium: {{ analysis.sodium }}
+  };
+
+  function updateNutrition() {
+    const foodWeight = parseFloat(foodWeightInput.value) || 0;
+
+    caloriesValue.textContent = `${(nutritionFacts.calories * foodWeight / 100).toFixed(2)} kcal`;
+    proteinValue.textContent = `${(nutritionFacts.protein * foodWeight / 100).toFixed(2)} g`;
+    carbsValue.textContent = `${(nutritionFacts.carbohydrates * foodWeight / 100).toFixed(2)} g`;
+    fatsValue.textContent = `${(nutritionFacts.fats * foodWeight / 100).toFixed(2)} g`;
+    fiberValue.textContent = `${(nutritionFacts.fiber * foodWeight / 100).toFixed(2)} g`;
+    sugarsValue.textContent = `${(nutritionFacts.sugars * foodWeight / 100).toFixed(2)} g`;
+    sodiumValue.textContent = `${(nutritionFacts.sodium * foodWeight / 100).toFixed(2)} mg`;
+
+    nutritionHeading.textContent = `Nutrition Facts per ${foodWeight}g`;
+  }
+
+  foodWeightInput.addEventListener('input', updateNutrition);
+  updateNutrition();
+</script>
+{% endif %}
+
+{% endblock %}
