@@ -1,5 +1,10 @@
 # FitCheckApp
 
+
+https://github.com/user-attachments/assets/4cc1a2b8-b219-4107-bd33-8de60f918d6e
+
+
+
 ## INSTALLATION
 
 1. Follow the CSCI 40 slideset on how to setup a virtual environment and install 
@@ -43,6 +48,8 @@ This is necessary for getting PostgreSQL to work.
 Additional resources:
 [Complete Tutorial: Set-up PostgreSQL Database with Django Application](https://medium.com/django-unleashed/complete-tutorial-set-up-postgresql-database-with-django-application-d9e789ffa384)
 
-If any errors arise, feel free to message the group chat.
+If any errors arise, feel free to message the creator.
+
+Special thanks to my team Barbie Barrion, Ysaac Mesa, Ian Ferol, and Paolo Ong for implementing other features.
 
 Thank you, and here's to (as close to) no errors or bugs!
