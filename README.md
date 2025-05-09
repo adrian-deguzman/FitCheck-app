@@ -7,7 +7,7 @@
 
 https://github.com/user-attachments/assets/4cc1a2b8-b219-4107-bd33-8de60f918d6e
 
-🎥 **This demo shows a quick run-through of the FitCheck web application, with a focus on the Food Analysis feature I developed.** It showcases the integration of three AI models:
+**This demo shows a quick run-through of the FitCheck web application, with a focus on the Food Analysis feature I developed.** It showcases the integration of three AI models:
 - **ResNet18** for food classification from images,
 - **MistralAI** for generating concise food descriptions,
 - **GPT-3.5** for suggesting nutritional alternatives based on detected allergens or health risks.
