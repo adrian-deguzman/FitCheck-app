@@ -3,7 +3,7 @@
 **FitCheck** redefines the Gen Z phrase "fit check"—from fashion flex to daily wellness check. This AI-driven web application provides a holistic view of your health, integrating nutrition, fitness, hydration, sleep, mood, and body tracking features into one seamless experience.
 
 ---
-## 📹 Video Demo
+## Video Demo
 
 https://github.com/user-attachments/assets/4cc1a2b8-b219-4107-bd33-8de60f918d6e
 
@@ -12,7 +12,7 @@ https://github.com/user-attachments/assets/4cc1a2b8-b219-4107-bd33-8de60f918d6e
 - **MistralAI** for generating concise food descriptions,
 - **GPT-3.5** for suggesting nutritional alternatives based on detected allergens or health risks.
 
-## 🚀 Project Description
+## Project Description
 
 FitCheck is a personal health companion that leverages image recognition, AI analysis, and smart recommendations to help users take charge of their wellness journey.
 
@@ -20,33 +20,33 @@ From analyzing your meals using a single photo, to generating tailored meal plan
 
 ---
 
-## 🔑 Key Features
+## Key Features
 
-### 🧍 User Profile Management
+### User Profile Management
 - Collects user info (with consent) for tailored suggestions.
 - Limits features if consent is not provided.
 
-### 🍱 AI Food Analysis
+### AI Food Analysis
 - Upload meal images for AI-driven classification.
 - View nutritional facts per 100g: calories, protein, carbs, fats, sugar, fiber, sodium.
 - Auto-detect ingredients & allergens.
 - Suggests healthy alternatives using GPT-3.5.
 - AI-generated food descriptions (via MistralAI).
 
-### 📋 Personalized Meal Planning
+### Personalized Meal Planning
 - Custom plans based on dietary needs, allergies, and goals.
 - Includes recipes and ingredient lists.
 
-### 💧 Hydration Tracker
+### Hydration Tracker
 - Sends reminders based on intake goal, container size, and user schedule.
 - Fully configurable and optional.
 
-### 🏃 Fitness Planning
+### Fitness Planning
 - Recommends workouts (aerobic/anaerobic) to burn analyzed food calories.
 - Guides calorie deficit planning and intermittent fasting.
 - Tracks fasting progress and adherence.
 
-### 📊 Wellness Tracking
+### Wellness Tracking
 - **BMI Tracker**: Color-coded healthy weight categories.
 - **Mood Tracker**: Select mood & write notes.
 - **Sleep Tracker**: Input sleep/wake times to track hours.
