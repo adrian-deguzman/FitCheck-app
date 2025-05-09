@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Sleep Tracker{% endblock %}
+
+{% block content %}
+<nav>
+    <a href="{% url 'wellnesstrack:bmi_form' %}"><i class="fas fa-spoon"></i> BMI Tracker</a>
+    <a href="{% url 'wellnesstrack:mood_form' %}"><i class="fas fa-smile"></i> Mood Tracker</a>
+    <a href="{% url 'wellnesstrack:sleep_form' %}"><i class="fas fa-bed"></i> Sleep Tracker</a>
+    <a href="{% url 'wellnesstrack:past_analyses' %}"><i class="fas fa-history"></i> View Past Analyses</a>        
+</nav>
+<br>
+  <div class="mini-box">
+    <h2>Log Your Sleep</h2>
+    
+    <form method="post">
+      {% csrf_token %}
+
+      <p>
+        {{ form.user.label_tag }}
+        {{ form.user }}
+      </p>
+
+      <p>
+        {{ form.sleep_duration.label_tag }}
+        {{ form.sleep_duration }}
+      </p>
+
+      <p>
+        {{ form.date.label_tag }}
+        {{ form.date }}
+      </p>
+
+      <p>
+        {{ form.sleep_quality.label_tag }}
+        {{ form.sleep_quality }}
+      </p>
+
+      <button type="submit" class="button">Log Sleep</button>
+    </form>
+  </div>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Mood Tracker{% endblock %}
+
+{% block content %}
+<nav>
+    <a href="{% url 'wellnesstrack:bmi_form' %}"><i class="fas fa-spoon"></i> BMI Tracker</a>
+    <a href="{% url 'wellnesstrack:mood_form' %}"><i class="fas fa-smile"></i> Mood Tracker</a>
+    <a href="{% url 'wellnesstrack:sleep_form' %}"><i class="fas fa-bed"></i> Sleep Tracker</a>
+    <a href="{% url 'wellnesstrack:past_analyses' %}"><i class="fas fa-history"></i> View Past Analyses</a>        
+</nav>
+<br>
+  <div class="mini-box">
+    <h3>Mood Tracker</h3>
+    <form method="post" action="{% url 'wellnesstrack:mood_form' %}">
+      {% csrf_token %}
+
+      <div>
+        <label for="user">Your Name:</label><br>
+        <input type="text" name="user" id="user" required>
+      </div>
+
+      <div style="margin-top: 15px;">
+        <label for="mood">How are you feeling today?</label><br>
+        <select name="mood" id="mood" required>
+          <option value="">--Select Mood--</option>
+          <option value="Happy">😊 Happy</option>
+          <option value="Normal">😐 Normal</option>
+          <option value="Sad">😢 Sad</option>
+          <option value="Awful">😡 Awful</option>
+        </select>
+      </div>
+
+      <div style="margin-top: 15px;">
+        <label for="notes">Additional Notes (optional)</label><br>
+        <textarea name="notes" id="notes" rows="4" cols="40" placeholder="Write anything you'd like to reflect on..."></textarea>
+      </div>
+
+      <div style="margin-top: 20px;">
+        <button type="submit" class="button">Submit</button>
+      </div>
+    </form>
+  </div>
+{% endblock %}
